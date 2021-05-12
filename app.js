@@ -52,12 +52,14 @@ app.post('/', (req, res) => {
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
+// * fetching users
 app.get('/users', (req, res) => {
     // fetch all users
     // send array of users as a response to the client
     return res.json({ users });
 });
 
+// * creating users
 app.post('/users', (req, res) => {
     // create a new user from client's response, postman was used for this
     // save new user to existing database
@@ -75,6 +77,18 @@ app.post('/users', (req, res) => {
     return res.status(200).json({ message: "new user created" });
 });
 
+// * fetching a single user
+app.get('/users/:id', (req, res) => {
+    // fetch id
+    let id = req.params.id;
+    // find user with id
+    const fetchedUser = users.find(user => {
+        return String(user.id) === id;
+    });
+    // return user object as response
+    if (fetchedUser) res.status(200).json({ user: fetchedUser });
+    else res.status(404).json({ message: "user not found" });
+});
 
 // * Configure app to listen to a port
 const port = 7070;
