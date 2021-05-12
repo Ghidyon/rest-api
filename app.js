@@ -1,3 +1,4 @@
+// * Access express module
 const express = require('express');
 
 // * Creating a server
@@ -5,6 +6,9 @@ const app = express();
 
 // * Access users
 const users = require('./users.json');
+
+// * Access file system module
+const fs = require('fs');
 
 /* 
 * HTTP Request Methods
@@ -55,11 +59,20 @@ app.get('/users', (req, res) => {
 });
 
 app.post('/users', (req, res) => {
-    // create a new user from client's response
-    console.log(req.body);
+    // create a new user from client's response, postman was used for this
     // save new user to existing database
+    users.push(req.body.newUser);
     // save updated data to users.json
+    // stringify the json data
+    const stringedData = JSON.stringify(users, null, 2);
+    // rewrite the data to file users.json
+    fs.writeFile('users.json', stringedData, (err) => {
+        if (err) {
+            return res.status(500).json({ message: err });
+        }
+    })
     // send back a response to client
+    return res.status(200).json({ message: "new user created" });
 });
 
 
